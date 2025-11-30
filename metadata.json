@@ -1,0 +1,8 @@
+{
+  "name": "Void Rocks Interactive",
+  "description": "A new media art installation where pixel-art rocks float in a void, controlled by hand gestures.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
