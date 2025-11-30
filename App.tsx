@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import VoidCanvas from './components/VoidCanvas';
 import { interpretVoid } from './services/geminiService';
 import { VoidState, HandGestures } from './types';
-import { Settings, Info, Minimize2, Eye } from 'lucide-react';
+import { Settings, Info, Minimize2, Eye, Maximize, Minimize } from 'lucide-react';
 
 const App: React.FC = () => {
   const [appState, setAppState] = useState<VoidState>(VoidState.IDLE);
@@ -11,6 +11,7 @@ const App: React.FC = () => {
   const [isOracleLoading, setIsOracleLoading] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [uiVisible, setUiVisible] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Settings State
   const [ringHeight, setRingHeight] = useState<number>(0);
@@ -25,6 +26,27 @@ const App: React.FC = () => {
   const handleGestureUpdate = useCallback((newGestures: HandGestures) => {
     setGestures(newGestures);
   }, []);
+
+  // Listen for fullscreen changes (e.g. user presses ESC)
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
 
   const consultOracle = async () => {
     const canvas = document.querySelector('canvas');
@@ -83,14 +105,23 @@ const App: React.FC = () => {
             
             <div className="flex gap-2 pointer-events-auto">
                 <button 
+                    onClick={toggleFullscreen}
+                    className="p-3 bg-white/50 backdrop-blur-sm rounded-full hover:bg-white shadow-sm transition-all"
+                    title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                >
+                    {isFullscreen ? <Minimize size={18} className="text-slate-600" /> : <Maximize size={18} className="text-slate-600" />}
+                </button>
+                <button 
                     onClick={() => setUiVisible(false)}
                     className="p-3 bg-white/50 backdrop-blur-sm rounded-full hover:bg-white shadow-sm transition-all"
+                    title="Hide UI"
                 >
                     <Minimize2 size={18} className="text-slate-600" />
                 </button>
                 <button 
                     onClick={() => setShowSettings(!showSettings)}
                     className={`p-3 backdrop-blur-sm rounded-full shadow-sm transition-all ${showSettings ? 'bg-cyan-500 text-white' : 'bg-white/50 text-slate-600 hover:bg-white'}`}
+                    title="Settings"
                 >
                     <Settings size={18} />
                 </button>
