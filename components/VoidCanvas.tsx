@@ -56,7 +56,7 @@ const VoidCanvas: React.FC<VoidCanvasProps> = ({
   
   // Logic & Vision References
   const rocksDataRef = useRef<RockEntity[]>([]);
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | null>(null);
   const handLandmarkerRef = useRef<HandLandmarker | null>(null);
   
   // State Refs
