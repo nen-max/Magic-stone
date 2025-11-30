@@ -12,6 +12,9 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true
     },
+    build: {
+      target: 'esnext'
+    },
     define: {
       // This ensures process.env.API_KEY is replaced by the actual value during build
       'process.env.API_KEY': JSON.stringify(env.API_KEY || process.env.API_KEY)
