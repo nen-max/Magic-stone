@@ -343,12 +343,12 @@ const VoidCanvas: React.FC<VoidCanvasProps> = ({
     const isFist = curledCount >= 3;
     physicsState.current.isFist = isFist;
 
-    // Pinch: Thumb (4) & Middle (12)
+    // Pinch: Thumb (4) & Index (8)
     let normalizedDist = 0;
     if (!isFist) {
         const thumb = hand[4];
-        const middle = hand[12];
-        const dist = Math.sqrt(Math.pow(thumb.x - middle.x, 2) + Math.pow(thumb.y - middle.y, 2));
+        const indexFinger = hand[8]; // Changed from Middle (12) to Index (8)
+        const dist = Math.sqrt(Math.pow(thumb.x - indexFinger.x, 2) + Math.pow(thumb.y - indexFinger.y, 2));
         normalizedDist = Math.min(Math.max((dist - 0.02) / 0.2, 0), 1);
         physicsState.current.targetRadius = 1.5 + (normalizedDist * 4.0);
     }
